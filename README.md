@@ -1,6 +1,6 @@
 # Hospital — Banco de Dados
 
-Modelo relacional em **MySQL** para um sistema hospitalar de registro de consultas e exames dos pacientes.
+Modelo relacional em **MySQL 8** para um sistema hospitalar de registro de consultas e exames dos pacientes. A implementação em Java que usa este banco está em [HospitalSys](https://github.com/IagoFel1x/HospitalSys).
 
 ## Arquivos
 
@@ -8,7 +8,7 @@ Modelo relacional em **MySQL** para um sistema hospitalar de registro de consult
 |---------|----------|
 | `SistemHospital/Hospital_DB.sql` | Criação do banco `hospital_db` e de todas as tabelas |
 | `SistemHospital/Hospital_DB_Populacao.sql` | Dados de exemplo |
-| `SistemHospital/Hospital_DB_Consultas.sql` | Consultas SQL de exemplo |
+| `SistemHospital/Hospital_DB_Consultas.sql` | 5 SELECTs, 4 UPDATEs e 4 DELETEs comentados |
 
 ## Modelo de dados
 
@@ -17,11 +17,13 @@ Modelo relacional em **MySQL** para um sistema hospitalar de registro de consult
 - **Atendimento clínico:** `Medico`, `Consulta`, `Triagem`, `Exame`, `Diagnostico`, `Medicamento`, `Receita`
 - **Relacionamentos N:N:** `Medico_Hospital`, `Medico_Paciente`
 
-Fluxo clínico principal: **Paciente → Consulta → Exame → Diagnóstico → Receita (Medicamento)**.
+Fluxo clínico principal: **Paciente → Triagem → Consulta → Exame → Diagnóstico → Receita (Medicamento)**.
+
+`Triagem.id_consulta` é opcional: uma triagem de pronto atendimento pode existir antes de virar consulta.
 
 ## Como usar
 
-Execute os scripts na ordem abaixo (MySQL 8+):
+Execute os scripts na ordem abaixo:
 
 ```bash
 mysql -u root -p < SistemHospital/Hospital_DB.sql
@@ -31,14 +33,10 @@ mysql -u root -p < SistemHospital/Hospital_DB_Consultas.sql
 
 > Atenção: `Hospital_DB.sql` começa com `DROP DATABASE IF EXISTS hospital_db;` e apaga o banco existente.
 
-## Pontos de melhoria
+## Próximos passos
 
-- A tabela `Triagem` não tem chave estrangeira para `Paciente` ou `Consulta`, então os registros ficam desvinculados.
-- Considerar `ON DELETE`/`ON UPDATE` nas chaves estrangeiras.
-
-## Projetos relacionados
-
-A implementação em Java está em [HospitalSys](https://github.com/IagoFel1x/HospitalSys).
+- Definir `ON DELETE`/`ON UPDATE` nas chaves estrangeiras conforme a regra de negócio (hoje o padrão `RESTRICT` impede apagar registros referenciados).
+- Normalizar `Leito.status` e `PlanoDeSaude.tipo` em tabelas de domínio, se o sistema crescer.
 
 ## Autor
 
