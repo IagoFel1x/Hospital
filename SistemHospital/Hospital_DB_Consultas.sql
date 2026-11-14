@@ -1,8 +1,8 @@
--- SCRIPT COMPLETO: 4 SELECTs, 4 UPDATEs e 4 DELETEs
+-- SCRIPT COMPLETO: 5 SELECTs, 4 UPDATEs e 4 DELETEs
 
 USE hospital_db;
 
--- PARTE 1: 4 EXEMPLOS DE CONSULTA (SELECT)
+-- PARTE 1: EXEMPLOS DE CONSULTA (SELECT)
 
 -- CONSULTA 1: Listar os médicos que realizaram mais consultas.
 -- Demonstra o uso de JOIN, COUNT, GROUP BY e ORDER BY para criar um ranking de produtividade.
@@ -75,6 +75,26 @@ LEFT JOIN Receita r ON d.id_diagnostico = r.id_diagnostico
 LEFT JOIN Medicamento med ON r.id_medicamento = med.id_medicamento
 WHERE
     p.id_paciente = 1; -- Substituir pelo ID do paciente desejado
+
+
+-- CONSULTA 5: Sinais vitais colhidos na triagem de cada consulta.
+-- Demonstra o uso da FK opcional Triagem.id_consulta (LEFT JOIN mantém
+-- consultas que não tiveram triagem).
+SELECT
+    c.id_consulta,
+    c.data AS data_consulta,
+    p.nome AS paciente,
+    t.pressao_arterial,
+    t.temperatura,
+    t.peso,
+    t.altura,
+    t.obs AS observacao_triagem
+FROM
+    Consulta c
+JOIN Paciente p ON c.id_paciente = p.id_paciente
+LEFT JOIN Triagem t ON t.id_consulta = c.id_consulta
+ORDER BY
+    c.data, c.hora;
 
 
 -- PARTE 2: 4 EXEMPLOS DE ATUALIZAÇÃO (UPDATE)

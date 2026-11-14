@@ -74,6 +74,12 @@ INSERT INTO Consulta (id_consulta, data, hora, diagnostico_geral, id_paciente, i
 (5, '2025-09-24', '16:00:00', 'Consulta de rotina para controle de diabetes.', 4, 2),
 (6, '2025-09-25', '08:00:00', 'Avaliação pré-operatória.', 1, 1); -- Mais consultas para o Dr. Carlos para o ranking
 
+-- Triagem feita antes das consultas
+INSERT INTO Triagem (id_triagem, data_hora, pressao_arterial, temperatura, peso, altura, obs, id_consulta) VALUES
+(1, '2025-09-20 09:45:00', '13/9', 36.60, 82.50, 1.78, 'Pressão levemente elevada; paciente hipertenso.', 1),
+(2, '2025-09-22 09:15:00', '12/8', 38.20, 61.00, 1.65, 'Febre e dor de garganta.', 3),
+(3, '2025-09-24 15:45:00', '11/7', 36.40, 58.30, 1.62, 'Glicemia capilar: 142 mg/dL.', 5);
+
 -- 4. Dados dependentes de eventos (Consulta -> Exame -> Diagnóstico -> Receita)
 INSERT INTO Exame (id_exame, tipo_exame, data, tipo_resultado, id_consulta) VALUES
 (1, 'Eletrocardiograma', '2025-09-20 10:15:00', 'Resultados normais', 1);

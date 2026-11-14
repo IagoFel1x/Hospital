@@ -1,5 +1,5 @@
 DROP DATABASE IF EXISTS hospital_db;
-CREATE DATABASE hospital_db;
+CREATE DATABASE hospital_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE hospital_db;
 
 -- Tabela: Hospital
@@ -8,7 +8,7 @@ CREATE TABLE Hospital (
     nome VARCHAR(255) NOT NULL,
     endereco VARCHAR(255),
     telefone VARCHAR(20)
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Ambulancia (
@@ -18,7 +18,7 @@ CREATE TABLE Ambulancia (
     ano INT,
     id_hospital INT NOT NULL,
     FOREIGN KEY (id_hospital) REFERENCES Hospital(id_hospital)
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Funcionario (
@@ -30,7 +30,7 @@ CREATE TABLE Funcionario (
     email VARCHAR(255) UNIQUE,
     id_hospital INT NOT NULL,
     FOREIGN KEY (id_hospital) REFERENCES Hospital(id_hospital)
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Paciente (
@@ -41,7 +41,7 @@ CREATE TABLE Paciente (
     endereco TEXT,
     sexo CHAR(1),
     data_nascimento DATE
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE FichaMedica (
@@ -51,7 +51,7 @@ CREATE TABLE FichaMedica (
     observacoes TEXT,
     id_paciente INT NOT NULL UNIQUE, -- Relacionamento 1 para 1
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente)
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Leito (
@@ -59,7 +59,7 @@ CREATE TABLE Leito (
     numero VARCHAR(10) NOT NULL,
     tipo VARCHAR(50),
     status VARCHAR(50) -- Ex: 'Ocupado', 'Livre', 'Manutenção'
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Internacao (
@@ -71,7 +71,7 @@ CREATE TABLE Internacao (
     id_leito INT NOT NULL,
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente),
     FOREIGN KEY (id_leito) REFERENCES Leito(id_leito)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE Visita (
     id_visita INT PRIMARY KEY AUTO_INCREMENT,
@@ -79,7 +79,7 @@ CREATE TABLE Visita (
     observacao TEXT,
     id_paciente INT NOT NULL,
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente)
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE PlanoDeSaude (
@@ -87,7 +87,7 @@ CREATE TABLE PlanoDeSaude (
     nome VARCHAR(100) NOT NULL,
     tipo ENUM('PublicoSus', 'Particular') NOT NULL, -- Generalização/Especialização
     cobertura TEXT
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE Paciente_PlanoDeSaude (
     id_paciente INT,
@@ -95,7 +95,7 @@ CREATE TABLE Paciente_PlanoDeSaude (
     PRIMARY KEY (id_paciente, id_plano_saude),
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente),
     FOREIGN KEY (id_plano_saude) REFERENCES PlanoDeSaude(id_plano_saude)
-);
+) ENGINE=InnoDB;
 
 
 
@@ -106,7 +106,7 @@ CREATE TABLE Medico (
     crm VARCHAR(20) NOT NULL UNIQUE,
     telefone VARCHAR(20),
     email VARCHAR(255) UNIQUE
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Consulta (
@@ -118,17 +118,23 @@ CREATE TABLE Consulta (
     id_medico INT NOT NULL,
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente),
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico)
-);
+) ENGINE=InnoDB;
 
 
+-- A triagem registra os sinais vitais colhidos antes de uma consulta.
+-- id_consulta é opcional para permitir triagens de pronto atendimento
+-- que ainda não viraram consulta.
 CREATE TABLE Triagem (
     id_triagem INT PRIMARY KEY AUTO_INCREMENT,
+    data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     pressao_arterial VARCHAR(10),
     temperatura DECIMAL(4, 2),
     peso DECIMAL(5, 2),
     altura DECIMAL(3, 2),
-    obs TEXT
-);
+    obs TEXT,
+    id_consulta INT NULL,
+    FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta)
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Exame (
@@ -138,7 +144,7 @@ CREATE TABLE Exame (
     tipo_resultado VARCHAR(255),
     id_consulta INT NOT NULL,
     FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta)
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Diagnostico (
@@ -147,7 +153,7 @@ CREATE TABLE Diagnostico (
     data DATETIME NOT NULL,
     id_exame INT NOT NULL,
     FOREIGN KEY (id_exame) REFERENCES Exame(id_exame)
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Medicamento (
@@ -155,7 +161,7 @@ CREATE TABLE Medicamento (
     nome VARCHAR(100) NOT NULL,
     fabricante VARCHAR(100),
     descricao TEXT
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Receita (
@@ -167,7 +173,7 @@ CREATE TABLE Receita (
     id_medicamento INT NOT NULL,
     FOREIGN KEY (id_diagnostico) REFERENCES Diagnostico(id_diagnostico),
     FOREIGN KEY (id_medicamento) REFERENCES Medicamento(id_medicamento)
-);
+) ENGINE=InnoDB;
 
 --  TABELAS DE RELACIONAMENTO
 
@@ -177,7 +183,7 @@ CREATE TABLE Medico_Hospital (
     PRIMARY KEY (id_medico, id_hospital),
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico),
     FOREIGN KEY (id_hospital) REFERENCES Hospital(id_hospital)
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE Medico_Paciente (
@@ -186,4 +192,4 @@ CREATE TABLE Medico_Paciente (
     PRIMARY KEY (id_medico, id_paciente),
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico),
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente)
-);
+) ENGINE=InnoDB;
